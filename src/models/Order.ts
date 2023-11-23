@@ -11,7 +11,7 @@ const OrderSchema = new mongoose.Schema({
     },
     date: String,
     time: String,
-    timeStamp: Date,
+    timeStamp: { type: Date },
 });
 
 export const Order = model("Order", OrderSchema);

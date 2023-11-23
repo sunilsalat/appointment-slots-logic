@@ -10,14 +10,12 @@ export const generateSlots = ({
 
     if (start_time) {
         let initialStartTime = moment(start_time, "HH:mm:ss");
-
         let breakStartTime = moment(break_start_time, "HH:mm:ss");
-
         let breakEndTime = moment(break_end_time, "HH:mm:ss");
-
         let endTime = moment(end_time, "HH:mm:ss");
         let ST: any = initialStartTime;
         let ET: any;
+
         while (ST.isBefore(endTime)) {
             ET = moment(ST, "HH:mm:ss").add(1, "hours");
             if (
