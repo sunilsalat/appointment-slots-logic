@@ -37,11 +37,46 @@ export const checkAvailability = async (req: Request, res: Response) => {
         },
     });
 
+    // find providers working schedule
     const todaysProviderWorkTime: any = provider?.workSchedule.find(
         (item) => item.day_of_week == dayOfWeek
     );
 
-    console.log(todaysProviderWorkTime);
+    // generate slots based on providers standard availability
+    if (todaysProviderWorkTime) {
+        let initialStartTime = moment(
+            todaysProviderWorkTime.start_time,
+            "HH:mm:ss"
+        );
 
-    res.status(200).json({});
+        let breakStartTime = moment(
+            todaysProviderWorkTime.break_start_time,
+            "HH:mm:ss"
+        );
+
+        let breakEndTime = moment(
+            todaysProviderWorkTime.break_end_time,
+            "HH:mm:ss"
+        );
+
+        let endTime = moment(todaysProviderWorkTime.end_time, "HH:mm:ss");
+        let ST: any = initialStartTime;
+        let ET: any;
+        while (ST.isBefore(endTime)) {
+            ET = moment(ST, "HH:mm:ss").add(1, "hours");
+            if (
+                (ST.isBefore(breakStartTime) && ET.isBefore(breakStartTime)) ||
+                ST.isAfter(breakEndTime)
+            ) {
+                const obj = {
+                    startTime: ST,
+                    endTime: ET,
+                };
+                availableSlots.push(obj);
+            }
+            ST = moment(ST, "HH:mm:ss").add(1, "hours");
+        }
+    }
+
+    res.status(200).json({ availableSlots });
 };
